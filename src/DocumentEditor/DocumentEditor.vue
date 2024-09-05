@@ -148,8 +148,8 @@ export default {
       for(const page of this.pages) {
 
         // set raw HTML content
-        if(!this.content[page.content_idx]) page.elt.innerHTML = "<div><br></div>"; // ensure empty pages are filled with at least <div><br></div>, otherwise editing fails on Chrome
-        else if(typeof this.content[page.content_idx] == "string") page.elt.innerHTML = "<div>"+this.content[page.content_idx]+"</div>";
+        if(!this.content[page.content_idx]) page.elt.innerHTML = "<div class='background-container'><br></div>"; // ensure empty pages are filled with at least <div><br></div>, otherwise editing fails on Chrome
+        else if(typeof this.content[page.content_idx] == "string") page.elt.innerHTML = "<div class='background-container'>"+this.content[page.content_idx]+"</div>";
         else if(page.template) {
           const componentElement = defineCustomElement(page.template);
           customElements.define('component-'+page.uuid, componentElement);
