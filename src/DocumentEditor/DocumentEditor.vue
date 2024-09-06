@@ -148,8 +148,8 @@ export default {
       for(const page of this.pages) {
 
         // set raw HTML content
-        if(!this.content[page.content_idx]) page.elt.innerHTML = "<div class='background-container'><br></div>"; // ensure empty pages are filled with at least <div><br></div>, otherwise editing fails on Chrome
-        else if(typeof this.content[page.content_idx] == "string") page.elt.innerHTML = "<div class='background-container'>"+this.content[page.content_idx]+"</div>";
+        if(!this.content[page.content_idx]) page.elt.innerHTML = "<div><br></div>"; // ensure empty pages are filled with at least <div><br></div>, otherwise editing fails on Chrome
+        else if(typeof this.content[page.content_idx] == "string") page.elt.innerHTML = "<div>"+this.content[page.content_idx]+"</div>";
         else if(page.template) {
           const componentElement = defineCustomElement(page.template);
           customElements.define('component-'+page.uuid, componentElement);
@@ -431,6 +431,17 @@ export default {
         page.elt.dataset.contentIdx = page.content_idx;
         if(!this.printing_mode) page.elt.style = Object.entries(this.page_style(page_idx, page.template ? false : true)).map(([k, v]) => k.replace(/[A-Z]/g, match => ("-"+match.toLowerCase()))+":"+v).join(';'); // (convert page_style to CSS string)
         page.elt.contentEditable = (this.editable && !page.template) ? true : false;
+
+        // Create content page sub container for any customization (es. A content background that inherit container classes)
+        if (!page.elt.querySelector('.content-page-container')) {
+          const container = document.createElement('div')
+          container.className = 'content-page-container'
+          while (page.elt.firstChild){
+            container.appendChild(page.elt.firstChild)
+          }
+          page.elt.appendChild(container)
+        }
+
       }
     },
 
