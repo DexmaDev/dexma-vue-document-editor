@@ -4,7 +4,7 @@
     <!-- Page overlays (headers, footers, page numbers, ...) -->
     <div v-if="overlay" class="overlays" ref="overlays">
       <div v-for="(page, page_idx) in pages" class="overlay" :key="page.uuid+'-overlay'" :ref="(elt) => (pages_overlay_refs[page.uuid] = elt)"
-        v-html="overlay(page_idx+1, pages.length)" :style="page_style(page_idx, false)">
+           v-html="overlay(page_idx+1, pages.length)" :style="page_style(page_idx, false)">
       </div>
     </div>
 
@@ -215,7 +215,7 @@ export default {
 
         // check if this page, the next page, or any previous page content has been modified by the user (don't apply to template pages)
         if(!page.template && (prev_page_modified_flag || page.elt.innerHTML != page.prev_innerHTML
-          || (next_page_elt && !next_page.template && next_page_elt.innerHTML != next_page.prev_innerHTML))){
+            || (next_page_elt && !next_page.template && next_page_elt.innerHTML != next_page.prev_innerHTML))){
           prev_page_modified_flag = true;
 
           // BACKWARD-PROPAGATION
@@ -252,7 +252,7 @@ export default {
         // update pages in the DOM
         this.update_pages_elts();
       }
-      
+
       // Normalize pages HTML content
       for(const page of this.pages) {
         if(!page.template) page.elt.normalize(); // normalize HTML (merge text nodes) - don't touch template pages or it can break Vue
@@ -431,17 +431,6 @@ export default {
         page.elt.dataset.contentIdx = page.content_idx;
         if(!this.printing_mode) page.elt.style = Object.entries(this.page_style(page_idx, page.template ? false : true)).map(([k, v]) => k.replace(/[A-Z]/g, match => ("-"+match.toLowerCase()))+":"+v).join(';'); // (convert page_style to CSS string)
         page.elt.contentEditable = (this.editable && !page.template) ? true : false;
-
-        // Create content page sub container for any customization (es. A content background that inherit container classes)
-        if (!page.elt.querySelector('.content-page-container')) {
-          const container = document.createElement('div')
-          container.className = 'content-page-container'
-          while (page.elt.firstChild){
-            container.appendChild(page.elt.firstChild)
-          }
-          page.elt.appendChild(container)
-        }
-
       }
     },
 
@@ -495,7 +484,7 @@ export default {
           overlay_elt.style.overflow = "hidden";
           page.elt.prepend(overlay_elt);
         }
-        
+
         print_body.append(page.elt);
       }
 
