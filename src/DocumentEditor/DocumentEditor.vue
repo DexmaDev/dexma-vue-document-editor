@@ -122,10 +122,13 @@ export default {
       // Prevent launching this function multiple times
       if(this.reset_in_progress) return;
       this.reset_in_progress = true;
+      this.$emit('onToggleResetInProgress', this.reset_in_progress);
+
 
       // If provided content is empty, initialize it first and exit
       if(!this.content.length) {
         this.reset_in_progress = false;
+        this.$emit('onToggleResetInProgress', this.reset_in_progress);
         this.$emit("update:content", [""]);
         return;
       }
@@ -168,8 +171,8 @@ export default {
 
       // Clear "reset in progress" flag
       this.reset_in_progress = false;
+      this.$emit('onToggleResetInProgress', this.reset_in_progress);
     },
-
     // Spreads the HTML content over several pages until it fits
     fit_content_over_pages () {
       // Data variable this.pages_height must have been set before calling this function
@@ -558,7 +561,8 @@ export default {
     },
     zoom: {
       handler () { this.update_pages_elts(); }
-    }
+    },
+    e
   }
 
 }
