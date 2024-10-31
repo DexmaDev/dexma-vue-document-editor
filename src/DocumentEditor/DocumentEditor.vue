@@ -562,7 +562,6 @@ export default {
     zoom: {
       handler () { this.update_pages_elts(); }
     },
-    e
   }
 
 }
