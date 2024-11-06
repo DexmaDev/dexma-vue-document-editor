@@ -2603,7 +2603,7 @@ if (typeof window !== 'undefined') {
 
 ;// external {"commonjs":"vue","commonjs2":"vue","root":"Vue"}
 var external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject = require("vue");
-;// ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=191f0db4&scoped=true
+;// ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-40.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=60c23b1b&scoped=true
 
 const _hoisted_1 = {
   class: "editor",
@@ -2635,7 +2635,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onKeyup: _cache[1] || (_cache[1] = (...args) => $options.process_current_text_style && $options.process_current_text_style(...args))
   }, null, 44, _hoisted_4)], 512);
 }
-;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=191f0db4&scoped=true
+;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=60c23b1b&scoped=true
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.push.js
 var es_array_push = __webpack_require__(4114);
@@ -2900,7 +2900,13 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
       for (const page of this.pages) {
         // set raw HTML content
         if (!this.content[page.content_idx]) page.elt.innerHTML = "<div><br></div>"; // ensure empty pages are filled with at least <div><br></div>, otherwise editing fails on Chrome
-        else if (typeof this.content[page.content_idx] == "string") page.elt.innerHTML = "<div>" + this.content[page.content_idx] + "</div>";else if (page.template) {
+        else if (typeof this.content[page.content_idx] == "string") {
+          if (!this.content[page.content_idx].trim().startsWith("<div>") || !this.content[page.content_idx].trim().endsWith("</div>")) {
+            page.elt.innerHTML = "<div>" + this.content[page.content_idx] + "</div>";
+          } else {
+            page.elt.innerHTML = this.content[page.content_idx];
+          }
+        } else if (page.template) {
           const componentElement = (0,external_commonjs_vue_commonjs2_vue_root_Vue_namespaceObject.defineCustomElement)(page.template);
           customElements.define('component-' + page.uuid, componentElement);
           page.elt.appendChild(new componentElement({
@@ -3327,15 +3333,15 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 });
 ;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js
  
-;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=191f0db4&lang=css
+;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=60c23b1b&lang=css
 // extracted by mini-css-extract-plugin
 
-;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=191f0db4&lang=css
+;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=60c23b1b&lang=css
 
-;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=191f0db4&scoped=true&lang=css
+;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-12.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-12.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-12.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=60c23b1b&scoped=true&lang=css
 // extracted by mini-css-extract-plugin
 
-;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=191f0db4&scoped=true&lang=css
+;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=60c23b1b&scoped=true&lang=css
 
 // EXTERNAL MODULE: ./node_modules/vue-loader/dist/exportHelper.js
 var exportHelper = __webpack_require__(6262);
@@ -3348,7 +3354,7 @@ var exportHelper = __webpack_require__(6262);
 
 
 
-const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.A)(DocumentEditorvue_type_script_lang_js, [['render',render],['__scopeId',"data-v-191f0db4"]])
+const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.A)(DocumentEditorvue_type_script_lang_js, [['render',render],['__scopeId',"data-v-60c23b1b"]])
 
 /* harmony default export */ var DocumentEditor = (__exports__);
 ;// ./node_modules/@vue/cli-service/lib/commands/build/entry-lib.js
