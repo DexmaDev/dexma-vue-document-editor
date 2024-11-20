@@ -1,6 +1,6 @@
 {
   "name": "dexma-vue-document-editor",
-  "version": "2.3.9",
+  "version": "2.4.0",
   "description": "Paper-sized WYSIWYG document editor for Vue apps",
   "author": "Romain Lamothe (http://www.motla.fr/)",
   "license": "MIT",
