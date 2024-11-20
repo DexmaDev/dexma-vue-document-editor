@@ -21,11 +21,12 @@
 </template>
 
 <script>
-import {defineCustomElement} from 'vue';
+import {defineCustomElement, nextTick} from 'vue';
 import {
   move_children_forward_recursively,
   move_children_backwards_with_merging
 } from './imports/page-transition-mgmt.js';
+import {OverlayId} from "../enum/overlay";
 
 export default {
 
@@ -85,6 +86,7 @@ export default {
       prevent_next_content_update_from_parent: false, // workaround to avoid infinite update loop
       current_text_style: false, // contains the style at caret position
       printing_mode: false, // flag set when page is rendering in printing mode
+      attachedEventListeners: []
     }
   },
 
@@ -107,6 +109,9 @@ export default {
     window.removeEventListener("click", this.process_current_text_style);
     window.removeEventListener("beforeprint", this.before_print);
     window.removeEventListener("afterprint", this.after_print);
+    this.attachedEventListeners.forEach(({ element, type, listener }) => {
+      element.removeEventListener(type, listener);
+    });
   },
 
   computed: {
@@ -450,6 +455,7 @@ export default {
         if (!this.printing_mode) page.elt.style = Object.entries(this.page_style(page_idx, page.template ? false : true)).map(([k, v]) => k.replace(/[A-Z]/g, match => ("-" + match.toLowerCase())) + ":" + v).join(';'); // (convert page_style to CSS string)
         page.elt.contentEditable = (this.editable && !page.template) ? true : false;
       }
+      this.attachOverlayListeners();
     },
 
     // Get and store empty editor <div> width
@@ -546,6 +552,49 @@ export default {
 
       // recompute editor with and reposition elements
       this.update_editor_width();
+    },
+    attachOverlayListeners() {
+      nextTick(() => {
+        Object.values(this.pages_overlay_refs).forEach((overlayElement) => {
+          if (!overlayElement) return;
+
+          const header = overlayElement.querySelector(`#${OverlayId.HEADER}`);
+          const footer = overlayElement.querySelector(`#${OverlayId.FOOTER}`);
+
+          if (header  && header.nodeType === Node.ELEMENT_NODE && !header.__listenerAttached) {
+            const headerListener = (event) => this.handleHeaderInput(event);
+            header.addEventListener('input', headerListener);
+            header.__listenerAttached = true;
+            this.attachedEventListeners.push({ element: header, type: 'input', listener: headerListener });
+          }
+          if (footer  && footer.nodeType === Node.ELEMENT_NODE && !footer.__listenerAttached) {
+            const footerListener = (event) => this.handleFooterInput(event);
+            footer.addEventListener('input', footerListener);
+            footer.__listenerAttached = true;
+            this.attachedEventListeners.push({ element: footer, type: 'input', listener: footerListener });
+          }
+        });
+      })
+    },
+
+    handleHeaderInput(event) {
+      const newContent = event.target.innerHTML;
+      const isFirstPage = event.target.getAttribute('firstPage') === 'true';
+      if (isFirstPage) {
+        this.$emit('update:first-page-header', newContent);
+      } else {
+        this.$emit('update:header', newContent);
+      }
+    },
+
+    handleFooterInput(event) {
+      const newContent = event.target.innerHTML;
+      const isFirstPage = event.target.getAttribute('firstPage') === 'true';
+      if (isFirstPage) {
+        this.$emit('update:first-page-footer', newContent);
+      } else {
+        this.$emit('update:footer', newContent);
+      }
     }
   },
 
