@@ -561,48 +561,38 @@ export default {
           const footer = overlayElement.querySelector(`#${OverlayId.FOOTER}`);
 
           if (header && header.nodeType === Node.ELEMENT_NODE && !header.__listenerAttached) {
-            const headerListener = (event) => this.handleHeaderInput(event);
-            header.addEventListener('focusout', headerListener);
+            const headerFocusOut = (event) => this.$emit('headerFocusOut',event);
+            const headerFocusIn = (event) => this.$emit('headerFocusIn', event);
+            header.addEventListener('focusout', headerFocusOut);
+            header.addEventListener('focus', headerFocusIn);
+
             header.__listenerAttached = true;
-            this.attachedEventListeners.push({element: header, type: 'focusout', listener: headerListener});
+
+            this.attachedEventListeners.push({element: header, type: 'focusout', listener: headerFocusOut});
+            this.attachedEventListeners.push({element: header, type: 'focus', listener: headerFocusIn});
           }
           if (footer && footer.nodeType === Node.ELEMENT_NODE && !footer.__listenerAttached) {
-            const footerListener = (event) => this.handleFooterInput(event);
-            footer.addEventListener('focusout', footerListener);
+            const footerFocusOut = (event) => this.$emit('footerFocusOut',event);
+            const footerFocusIn = (event) => this.$emit('footerFocusIn', event);
+            footer.addEventListener('focusout', footerFocusOut);
+            footer.addEventListener('focus', footerFocusIn);
+
             footer.__listenerAttached = true;
-            this.attachedEventListeners.push({element: footer, type: 'focusout', listener: footerListener});
+
+            this.attachedEventListeners.push({element: footer, type: 'focusout', listener: footerFocusOut});
+            this.attachedEventListeners.push({element: footer, type: 'focus', listener: footerFocusIn});
           }
         });
       })
     },
 
-    handleHeaderInput(event) {
-      const newContent = event.target.innerHTML;
-      const isFirstPage = event.target.getAttribute('firstPage') === 'true';
-      if (isFirstPage) {
-        this.$emit('update:first-page-header', newContent);
-      } else {
-        this.$emit('update:header', newContent);
-      }
-    },
-
-    handleFooterInput(event) {
-      const newContent = event.target.innerHTML;
-      const isFirstPage = event.target.getAttribute('firstPage') === 'true';
-      if (isFirstPage) {
-        this.$emit('update:first-page-footer', newContent);
-      } else {
-        this.$emit('update:footer', newContent);
-      }
-    },
-
     handleRenderOverlay(page, total) {
-      try {
-        if (this.overlay) {
+      if (this.overlay) {
+        try {
           return this.overlay(page, total);
+        } finally {
+          this.attachOverlayListeners();
         }
-      } finally {
-        this.attachOverlayListeners();
       }
     }
   },
