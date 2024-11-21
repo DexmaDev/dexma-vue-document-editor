@@ -5,7 +5,7 @@
     <div v-if="overlay" class="overlays" ref="overlays">
       <div v-for="(page, page_idx) in pages" class="overlay" :key="page.uuid+'-overlay'"
            :ref="(elt) => (pages_overlay_refs[page.uuid] = elt)"
-           v-html="overlay(page_idx+1, pages.length)" :style="page_style(page_idx, false)">
+           v-html="handleRenderOverlay(page_idx+1, pages.length)" :style="page_style(page_idx, false)">
       </div>
     </div>
 
@@ -109,7 +109,7 @@ export default {
     window.removeEventListener("click", this.process_current_text_style);
     window.removeEventListener("beforeprint", this.before_print);
     window.removeEventListener("afterprint", this.after_print);
-    this.attachedEventListeners.forEach(({ element, type, listener }) => {
+    this.attachedEventListeners.forEach(({element, type, listener}) => {
       element.removeEventListener(type, listener);
     });
   },
@@ -455,7 +455,6 @@ export default {
         if (!this.printing_mode) page.elt.style = Object.entries(this.page_style(page_idx, page.template ? false : true)).map(([k, v]) => k.replace(/[A-Z]/g, match => ("-" + match.toLowerCase())) + ":" + v).join(';'); // (convert page_style to CSS string)
         page.elt.contentEditable = (this.editable && !page.template) ? true : false;
       }
-      this.attachOverlayListeners();
     },
 
     // Get and store empty editor <div> width
@@ -561,17 +560,17 @@ export default {
           const header = overlayElement.querySelector(`#${OverlayId.HEADER}`);
           const footer = overlayElement.querySelector(`#${OverlayId.FOOTER}`);
 
-          if (header  && header.nodeType === Node.ELEMENT_NODE && !header.__listenerAttached) {
+          if (header && header.nodeType === Node.ELEMENT_NODE && !header.__listenerAttached) {
             const headerListener = (event) => this.handleHeaderInput(event);
-            header.addEventListener('input', headerListener);
+            header.addEventListener('focusout', headerListener);
             header.__listenerAttached = true;
-            this.attachedEventListeners.push({ element: header, type: 'input', listener: headerListener });
+            this.attachedEventListeners.push({element: header, type: 'focusout', listener: headerListener});
           }
-          if (footer  && footer.nodeType === Node.ELEMENT_NODE && !footer.__listenerAttached) {
+          if (footer && footer.nodeType === Node.ELEMENT_NODE && !footer.__listenerAttached) {
             const footerListener = (event) => this.handleFooterInput(event);
-            footer.addEventListener('input', footerListener);
+            footer.addEventListener('focusout', footerListener);
             footer.__listenerAttached = true;
-            this.attachedEventListeners.push({ element: footer, type: 'input', listener: footerListener });
+            this.attachedEventListeners.push({element: footer, type: 'focusout', listener: footerListener});
           }
         });
       })
@@ -594,6 +593,16 @@ export default {
         this.$emit('update:first-page-footer', newContent);
       } else {
         this.$emit('update:footer', newContent);
+      }
+    },
+
+    handleRenderOverlay(page, total) {
+      try {
+        if (this.overlay) {
+          return this.overlay(page, total);
+        }
+      } finally {
+        this.attachOverlayListeners();
       }
     }
   },
