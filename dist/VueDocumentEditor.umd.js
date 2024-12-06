@@ -2475,6 +2475,33 @@ $({ target: 'Iterator', proto: true, real: true }, {
 
 /***/ }),
 
+/***/ 7588:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+
+var $ = __webpack_require__(6518);
+var iterate = __webpack_require__(2652);
+var aCallable = __webpack_require__(9306);
+var anObject = __webpack_require__(8551);
+var getIteratorDirect = __webpack_require__(1767);
+
+// `Iterator.prototype.forEach` method
+// https://tc39.es/ecma262/#sec-iterator.prototype.foreach
+$({ target: 'Iterator', proto: true, real: true }, {
+  forEach: function forEach(fn) {
+    anObject(this);
+    aCallable(fn);
+    var record = getIteratorDirect(this);
+    var counter = 0;
+    iterate(record, function (value) {
+      fn(value, counter++);
+    }, { IS_RECORD: true });
+  }
+});
+
+
+/***/ }),
+
 /***/ 1701:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
@@ -2518,6 +2545,16 @@ __webpack_require__(2489);
 
 // TODO: Remove from `core-js@4`
 __webpack_require__(116);
+
+
+/***/ }),
+
+/***/ 3949:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+
+// TODO: Remove from `core-js@4`
+__webpack_require__(7588);
 
 
 /***/ }),
@@ -2620,7 +2657,7 @@ if (typeof window !== 'undefined') {
 
 // EXTERNAL MODULE: external {"commonjs":"vue","commonjs2":"vue","root":"Vue"}
 var external_commonjs_vue_commonjs2_vue_root_Vue_ = __webpack_require__(9274);
-;// ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-82.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=60c23b1b&scoped=true
+;// ./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib/index.js??clonedRuleSet-82.use[1]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=39c9e15a&scoped=true
 
 const _hoisted_1 = {
   class: "editor",
@@ -2640,7 +2677,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       key: page.uuid + '-overlay',
       ref_for: true,
       ref: elt => $data.pages_overlay_refs[page.uuid] = elt,
-      innerHTML: $props.overlay(page_idx + 1, $data.pages.length),
+      innerHTML: $options.handleRenderOverlay(page_idx + 1, $data.pages.length),
       style: (0,external_commonjs_vue_commonjs2_vue_root_Vue_.normalizeStyle)($options.page_style(page_idx, false))
     }, null, 12, _hoisted_3);
   }), 128))], 512)) : (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createCommentVNode)("", true), (0,external_commonjs_vue_commonjs2_vue_root_Vue_.createElementVNode)("div", {
@@ -2652,7 +2689,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onKeyup: _cache[1] || (_cache[1] = (...args) => $options.process_current_text_style && $options.process_current_text_style(...args))
   }, null, 44, _hoisted_4)], 512);
 }
-;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=60c23b1b&scoped=true
+;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=template&id=39c9e15a&scoped=true
 
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.push.js
 var es_array_push = __webpack_require__(4114);
@@ -2662,6 +2699,8 @@ var esnext_iterator_constructor = __webpack_require__(8992);
 var esnext_iterator_filter = __webpack_require__(4520);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.iterator.find.js
 var esnext_iterator_find = __webpack_require__(2577);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.iterator.for-each.js
+var esnext_iterator_for_each = __webpack_require__(3949);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.iterator.map.js
 var esnext_iterator_map = __webpack_require__(1454);
 ;// ./src/DocumentEditor/imports/page-transition-mgmt.js
@@ -2798,6 +2837,7 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 
 
 
+
 /* harmony default export */ var DocumentEditorvue_type_script_lang_js = ({
   props: {
     // This contains the initial content of the document that can be synced
@@ -2852,7 +2892,9 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
       // workaround to avoid infinite update loop
       current_text_style: false,
       // contains the style at caret position
-      printing_mode: false // flag set when page is rendering in printing mode
+      printing_mode: false,
+      // flag set when page is rendering in printing mode
+      attachedEventListeners: []
     };
   },
   mounted() {
@@ -2872,6 +2914,13 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
     window.removeEventListener("click", this.process_current_text_style);
     window.removeEventListener("beforeprint", this.before_print);
     window.removeEventListener("afterprint", this.after_print);
+    this.attachedEventListeners.forEach(({
+      element,
+      type,
+      listener
+    }) => {
+      element.removeEventListener(type, listener);
+    });
   },
   computed: {
     css_media_style() {
@@ -3312,6 +3361,42 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 
       // recompute editor with and reposition elements
       this.update_editor_width();
+    },
+    attachOverlayListeners() {
+      (0,external_commonjs_vue_commonjs2_vue_root_Vue_.nextTick)(() => {
+        Object.values(this.pages_overlay_refs).forEach(overlayElement => {
+          if (!overlayElement) return;
+          const editableElements = overlayElement.querySelectorAll('[contenteditable="true"]');
+          editableElements.forEach(element => {
+            if (element && element.nodeType === Node.ELEMENT_NODE && !element.__listenerAttached) {
+              const focusOut = event => this.$emit('overlayElementFocusOut', event);
+              const focusIn = event => this.$emit('overlayElementFocusIn', event);
+              element.addEventListener('focusout', focusOut);
+              element.addEventListener('focus', focusIn);
+              element.__listenerAttached = true;
+              this.attachedEventListeners.push({
+                element: element,
+                type: 'overlayElementFocusOut',
+                listener: focusOut
+              });
+              this.attachedEventListeners.push({
+                element: element,
+                type: 'overlayElementFocusIn',
+                listener: focusIn
+              });
+            }
+          });
+        });
+      });
+    },
+    handleRenderOverlay(page, total) {
+      if (this.overlay) {
+        try {
+          return this.overlay(page, total);
+        } finally {
+          this.attachOverlayListeners();
+        }
+      }
     }
   },
   // Watch for changes and adapt content accordingly
@@ -3350,15 +3435,15 @@ function move_children_backwards_with_merging(page_html_div, next_page_html_div,
 });
 ;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=script&lang=js
  
-;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=60c23b1b&lang=css
+;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=39c9e15a&lang=css
 // extracted by mini-css-extract-plugin
 
-;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=60c23b1b&lang=css
+;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=0&id=39c9e15a&lang=css
 
-;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=60c23b1b&scoped=true&lang=css
+;// ./node_modules/mini-css-extract-plugin/dist/loader.js??clonedRuleSet-54.use[0]!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-54.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-54.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=39c9e15a&scoped=true&lang=css
 // extracted by mini-css-extract-plugin
 
-;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=60c23b1b&scoped=true&lang=css
+;// ./src/DocumentEditor/DocumentEditor.vue?vue&type=style&index=1&id=39c9e15a&scoped=true&lang=css
 
 // EXTERNAL MODULE: ./node_modules/vue-loader/dist/exportHelper.js
 var exportHelper = __webpack_require__(6262);
@@ -3371,7 +3456,7 @@ var exportHelper = __webpack_require__(6262);
 
 
 
-const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.A)(DocumentEditorvue_type_script_lang_js, [['render',render],['__scopeId',"data-v-60c23b1b"]])
+const __exports__ = /*#__PURE__*/(0,exportHelper/* default */.A)(DocumentEditorvue_type_script_lang_js, [['render',render],['__scopeId',"data-v-39c9e15a"]])
 
 /* harmony default export */ var DocumentEditor = (__exports__);
 ;// ./node_modules/@vue/cli-service/lib/commands/build/entry-lib.js
