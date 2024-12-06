@@ -556,32 +556,18 @@ export default {
       nextTick(() => {
         Object.values(this.pages_overlay_refs).forEach((overlayElement) => {
           if (!overlayElement) return;
-
-          const header = overlayElement.querySelector(`#${OverlayId.HEADER}`);
-          const footer = overlayElement.querySelector(`#${OverlayId.FOOTER}`);
-
-          if (header && header.nodeType === Node.ELEMENT_NODE && !header.__listenerAttached) {
-            const headerFocusOut = (event) => this.$emit('headerFocusOut',event);
-            const headerFocusIn = (event) => this.$emit('headerFocusIn', event);
-            header.addEventListener('focusout', headerFocusOut);
-            header.addEventListener('focus', headerFocusIn);
-
-            header.__listenerAttached = true;
-
-            this.attachedEventListeners.push({element: header, type: 'focusout', listener: headerFocusOut});
-            this.attachedEventListeners.push({element: header, type: 'focus', listener: headerFocusIn});
-          }
-          if (footer && footer.nodeType === Node.ELEMENT_NODE && !footer.__listenerAttached) {
-            const footerFocusOut = (event) => this.$emit('footerFocusOut',event);
-            const footerFocusIn = (event) => this.$emit('footerFocusIn', event);
-            footer.addEventListener('focusout', footerFocusOut);
-            footer.addEventListener('focus', footerFocusIn);
-
-            footer.__listenerAttached = true;
-
-            this.attachedEventListeners.push({element: footer, type: 'focusout', listener: footerFocusOut});
-            this.attachedEventListeners.push({element: footer, type: 'focus', listener: footerFocusIn});
-          }
+          const editableElements = overlayElement.querySelectorAll('[contenteditable="true"]');
+          editableElements.forEach(element => {
+            if (element && element.nodeType === Node.ELEMENT_NODE && !element.__listenerAttached) {
+              const focusOut = (event) => this.$emit('overlayElementFocusOut',event);
+              const focusIn = (event) => this.$emit('overlayElementFocusIn', event);
+              element.addEventListener('focusout', focusOut);
+              element.addEventListener('focus', focusIn);
+              element.__listenerAttached = true;
+              this.attachedEventListeners.push({element: element, type: 'overlayElementFocusOut', listener: focusOut});
+              this.attachedEventListeners.push({element: element, type: 'overlayElementFocusIn', listener: focusIn});
+            }
+          });
         });
       })
     },
