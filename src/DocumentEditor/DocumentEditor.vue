@@ -26,7 +26,6 @@ import {
   move_children_forward_recursively,
   move_children_backwards_with_merging
 } from './imports/page-transition-mgmt.js';
-import {OverlayId} from "../enum/overlay";
 
 export default {
 
