@@ -30,12 +30,6 @@
 npm install vue-document-editor
 ```
 
-##### In your Vue.js 2.x project:
-
-```
-npm install vue-document-editor@1
-```
-
 ###### :speech_balloon: If you prefer static files, import assets from the `dist` folder
 
 ## Basic example

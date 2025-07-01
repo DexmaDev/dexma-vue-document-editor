@@ -18,10 +18,9 @@
 <script setup>
 import { ref, computed, reactive, watch, onMounted } from 'vue'
 import VueFileToolbarMenu from 'vue-file-toolbar-menu'
-import RecicleScrollerEditor from '../DocumentEditor/RecicleScrollerEditor.vue'
+import RecicleScrollerEditor from '../DocumentEditor/DocumentEditor.vue'
 import { getTestContent } from '../DocumentEditor/utils'
 
-//  const content = ref(['ciao'])
 const content = ref(getTestContent())
 const zoom = ref(0.8)
 const zoom_min = 0.1

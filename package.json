@@ -1,47 +1,61 @@
 {
-  "name": "dexma-vue-document-editor",
-  "version": "2.4.3",
-  "description": "Paper-sized WYSIWYG document editor for Vue apps",
-  "author": "Romain Lamothe (http://www.motla.fr/)",
-  "license": "MIT",
-  "keywords": [
-    "vue",
-    "vuejs",
-    "document",
-    "editor",
-    "wysiwyg",
-    "page",
-    "a4",
-    "text",
-    "processor",
-    "application"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/DexmaDev/dexma-vue-document-editor"
-  },
-  "homepage": "https://github.com/DexmaDev/dexma-vue-document-editor",
-  "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --dest docs && vue-cli-service build --target lib --name VueDocumentEditor src/DocumentEditor/DocumentEditor.vue",
-    "version": "npm run build && git add -A"
-  },
-  "main": "src/DocumentEditor/DocumentEditor.vue",
-  "devDependencies": {
-    "@vue/cli-plugin-babel": "^5.0.8",
-    "@vue/cli-service": "^5.0.8",
-    "vue": "^3.2.45",
-    "vue-file-toolbar-menu": "^2.2.0"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ],
-  "directories": {
-    "doc": "docs"
-  },
-  "dependencies": {
-    "vue-virtual-scroller": "^2.0.0-beta.8"
-  }
+    "name": "dexma-vue-document-editor",
+    "type": "module",
+    "version": "2.4.3",
+    "description": "Paper-sized WYSIWYG document editor for Vue apps",
+    "author": "Romain Lamothe (http://www.motla.fr/)",
+    "license": "MIT",
+    "keywords": [
+        "vue",
+        "vuejs",
+        "document",
+        "editor",
+        "wysiwyg",
+        "page",
+        "a4",
+        "text",
+        "processor",
+        "application"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/DexmaDev/dexma-vue-document-editor"
+    },
+    "homepage": "https://github.com/DexmaDev/dexma-vue-document-editor",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "tailwind:init": "tailwindcss init -p"
+    },
+    "main": "src/DocumentEditor/DocumentEditor.vue",
+    "devDependencies": {
+        "@rushstack/eslint-patch": "^1.12.0",
+        "@tailwindcss/postcss": "^4.1.11",
+        "@vitejs/plugin-vue": "^6.0.0",
+        "@vue/eslint-config-prettier": "^10.2.0",
+        "autoprefixer": "^10.4.21",
+        "eslint": "^9.30.0",
+        "eslint-config-prettier": "^10.1.5",
+        "eslint-plugin-prettier": "^5.5.1",
+        "postcss": "^8.5.6",
+        "prettier": "^3.6.2",
+        "tailwindcss": "^4.1.11",
+        "ts-loader": "^9.5.2",
+        "typescript": "^5.8.3",
+        "vite": "^7.0.0",
+        "vue": "^3.2.45",
+        "vue-file-toolbar-menu": "^2.2.0"
+    },
+    "browserslist": [
+        "> 1%",
+        "last 2 versions",
+        "not dead"
+    ],
+    "directories": {
+        "doc": "docs"
+    },
+    "dependencies": {
+        "vue-virtual-scroller": "^2.0.0-beta.8"
+    }
 }
