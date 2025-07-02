@@ -1,4 +1,4 @@
-import { Property } from "@/DocumentEditor/types/Editor"
+import { Property } from "@/types/Editor"
 import { Formats, TraslitterationFormat } from "@/enums/CustomElements"
 
 export const distributeTextToNodes = (

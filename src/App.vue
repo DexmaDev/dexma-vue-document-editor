@@ -17,9 +17,9 @@
 
 <script setup lang="ts">
 import VueFileToolbarMenu from 'vue-file-toolbar-menu'
-import DocumentEditor from './DocumentEditor/DocumentEditor.vue'
+import DocumentEditor from './components/base/editor/DocumentEditor.vue'
 import { computed, nextTick, onMounted, ref, toRaw, watch } from 'vue'
-import { getTestContent } from './DocumentEditor/utils'
+import { getTestContent } from './services/utils'
 
 const content = ref<string[]>(getTestContent())
 const zoom = ref<number>(0.8)

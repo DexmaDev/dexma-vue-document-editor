@@ -51,7 +51,7 @@ import {
 import { RecycleScroller } from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import FindAndReplaceModal from './FindAndReplaceModal.vue'
-import Page from './types/Page'
+import Page from '../../../types/Page'
 import '@/assets/main.css'
 import '@/assets/editor-style.css'
 

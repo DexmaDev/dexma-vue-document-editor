@@ -38,8 +38,8 @@
 </template>
 
 <script setup lang="ts">
-import Page, { PageMatchIndex } from './types/Page';
-import { debounce, replaceAllMatches } from './utils'
+import Page, { PageMatchIndex } from '../../../types/Page';
+import { debounce, replaceAllMatches } from '../../../services/utils'
 import { ref, computed, CSSProperties } from 'vue'
 
 const props = defineProps<{

@@ -1,4 +1,4 @@
-import { PageMatchIndex } from "./types/Page"
+import { PageMatchIndex } from "../types/Page"
 
 export const debounce = (fn: (...args: any) => void, delay: number) => {
     let timer: any

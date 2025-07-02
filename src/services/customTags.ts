@@ -1,4 +1,4 @@
-import { Property } from "@/DocumentEditor/types/Editor"
+import { Property } from "@/types/Editor"
 import { applyProperties, collectAndDistributeTextNodes, convertElementToSpan } from "./domManipulation"
 
 export const updateCustomTagContent = (

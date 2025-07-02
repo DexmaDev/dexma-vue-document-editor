@@ -25,7 +25,7 @@ import {defineCustomElement, nextTick} from 'vue';
 import {
   move_children_forward_recursively,
   move_children_backwards_with_merging
-} from './imports/page-transition-mgmt.js';
+} from '../../../services/page-transition-mgmt.js';
 
 export default {
 
