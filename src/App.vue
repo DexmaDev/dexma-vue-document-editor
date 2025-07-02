@@ -10,7 +10,7 @@
             :page-format="page_format_mm"
             :page-margins="page_margins"
             :display="display"
-            @update:modelValue="console.log('update model value')"
+            @update:modelValue="console.log('update model value received')"
         />
     </div>
 </template>

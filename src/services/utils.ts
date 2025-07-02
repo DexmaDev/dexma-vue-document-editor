@@ -1,4 +1,4 @@
-import { PageMatchIndex } from "../types/Page"
+import { PageMatchIndex } from '../types/Page'
 
 export const debounce = (fn: (...args: any) => void, delay: number) => {
     let timer: any
@@ -47,4 +47,13 @@ export const replaceAllMatches = (
     }
 
     return newContent
+}
+
+export const replaceAt = (
+    src: string,
+    start: number,
+    end: number,
+    replacement: string
+): string => {
+    return src.slice(0, start) + replacement + src.slice(end)
 }
