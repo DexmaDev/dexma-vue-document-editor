@@ -37,25 +37,26 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import Page, { PageMatchIndex } from './types/Page';
 import { debounce, replaceAllMatches } from './utils'
-import { ref, computed } from 'vue'
+import { ref, computed, CSSProperties } from 'vue'
 
-const props = defineProps({
-    pages: Array,
-    renderedPageIndexes: Array,
-    content: Array,
+const props = defineProps<{
+    pages: Page[],
+    renderedPageIndexes: number[],
+    content: string[],
     replaceActive: Boolean
-})
+}>()
 
 const emit = defineEmits(['onClose', 'onUpdate'])
 
-const findText = ref('')
-const replaceText = ref('')
-const matches = ref([])
-const currentMatchIndex = ref(0)
+const findText = ref<string>('')
+const replaceText = ref<string>('')
+const matches = ref<PageMatchIndex[]>([])
+const currentMatchIndex = ref<number>(0)
 
-const modalStyle = computed(() => ({
+const modalStyle = computed<CSSProperties>(() => ({
     position: 'absolute',
     top: '0px',
     right: '0px',

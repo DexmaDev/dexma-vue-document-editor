@@ -1,0 +1,142 @@
+.editor {
+    --padding-vertical-left: 11mm;
+    --padding-vertical-right: 11mm;
+    --padding-horizontal-top: 22mm;
+    --padding-horizontal-bottom: 22mm;
+    --line-size: 1.19;
+    --font-size: 16px;
+    --background-image: unset;
+    --margin-visibility: hidden;
+    position: relative;
+    hyphens: 'unset';
+}
+
+.editor ol {
+    list-style-type: decimal;
+    padding-left: 14px;
+}
+
+.editor .content .page li,
+.editor .overlays .overlay li {
+    font-size: var(--font-size);
+    line-height: var(--line-size);
+    font-weight: 500;
+}
+
+.editor .content .page ul,
+.editor .overlays .overlay ul {
+    list-style-type: disc;
+    padding-left: 7px;
+}
+
+.editor .content .page,
+.editor .overlays .overlay {
+    font-size: var(--font-size);
+    line-height: var(--line-size);
+}
+
+.editor > .content > .page {
+    font-family: Arial, sans-serif;
+    padding: var(--padding-horizontal-top)
+        calc(var(--padding-vertical-right) + 1mm)
+        var(--padding-horizontal-bottom)
+        calc(var(--padding-vertical-left) + 1mm) !important;
+}
+
+.editor > .content > .page > * {
+    background-color: #ff000000;
+}
+
+.editor > .content > .page::before {
+    content: '';
+    position: absolute;
+    top: calc(var(--padding-horizontal-top) + 38px);
+    left: 0;
+    right: 0;
+    bottom: var(--padding-horizontal-bottom);
+    background-image: var(--background-image);
+    background-size: 100% 38px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.editor > .content > .page::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--padding-vertical-left);
+    right: var(--padding-vertical-right);
+    border-left: 1px solid #e9e9e9;
+    border-right: 1px solid #e9e9e9;
+    pointer-events: none;
+    z-index: 0;
+    visibility: var(--margin-visibility);
+}
+
+.custom-tag {
+    cursor: pointer;
+    color: rgb(2, 121, 2) !important;
+}
+
+.custom-tag.draftcategory {
+    color: rgb(0, 104, 165) !important;
+}
+
+.custom-tag.draft {
+    color: rgb(118, 0, 165) !important;
+}
+
+.custom-tag.editorChat {
+    cursor: pointer;
+    color: rgb(165, 0, 96) !important;
+}
+
+.editor .content .page img {
+    max-width: -moz-available;
+    max-width: -webkit-fill-available;
+    max-width: fill-available;
+    position: relative;
+}
+
+.editor > .overlays > .overlay {
+    padding: 0 !important;
+}
+
+.editor .overlays .overlay * {
+    pointer-events: visible;
+    outline: none;
+    overflow: hidden;
+}
+
+/* Traslitteration */
+[traslitteration='uppercase'] {
+    text-transform: uppercase;
+}
+
+[traslitteration='lowercase'] {
+    text-transform: lowercase;
+}
+
+[traslitteration='title_case'] {
+    text-transform: capitalize;
+}
+
+[traslitteration='sentence_case'] {
+    text-transform: none;
+}
+
+[next_sentence]::after {
+    content: ' ' attr(next_sentence) ' ';
+}
+
+[previous_sentence]::before {
+    content: ' ' attr(previous_sentence) ' ';
+}
+
+.highlight {
+    background-color: rgba(255, 255, 0, 0.219);
+}
+.highlight.focus {
+    background-color: rgb(255, 255, 0);
+}
