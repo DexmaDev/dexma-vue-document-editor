@@ -1,36 +1,43 @@
 <template>
-    <div class="editor w-full" ref="editor">
-        {{ selectedCustomElement }}
+    <div class="editor w-full h-full" ref="editor">
+        <div
+            v-if="generatingPages"
+            class="w-full h-full flex items-center justify-center"
+        >
+            <BaseSpinner :text="t('global.generatingPages')" />
+        </div>
+
         <RecycleScroller
-            v-if="!loading"
+            v-else
             class="content"
+            direction="vertical"
             :items="pages"
-            :item-size="pagePxHeight"
+            :item-size="pagePxHeight + 20"
+            :item-secondary-size="pagePxWidth"
+            page-mode
+            :buffer="pagePxHeight / 2"
             key-field="uuid"
-            :buffer="5"
-            :item-style="getItemStyle"
             emit-update
             @update="handleScrollUpdate"
         >
-            <template #default="{ item: page, index }">
+            <template v-slot="{ item: page, index }">
                 <div
                     class="page"
-                    :style="pageStyle(index, !page.template)"
+                    :style="pageStyle()"
                     :contenteditable="editable && !page.template"
                     :data-content-idx="page.contentIdx"
                     @input="handleInput($event, page.contentIdx)"
                 >
-                    Pagina: {{ page.contentIdx }}
                     <div
-                        v-if="typeof modelValue[page.contentIdx] === 'string'"
-                        v-html="modelValue[page.contentIdx] ?? ''"
+                        v-if="typeof page.content === 'string'"
+                        v-html="page.content ?? ''"
                     />
-                    <component v-else :is="page.template" v-bind="page.props" />
                 </div>
             </template>
         </RecycleScroller>
 
         <FindAndReplaceModal
+            v-if="findAndReplaModalVisible"
             :pages="pages"
             :renderedPageIndexes="renderedPageIndexes"
             :content="modelValue"
@@ -57,6 +64,9 @@ import '@/assets/main.css'
 import '@/assets/editor-style.css'
 import FindAndReplaceModal from './FindAndReplaceModal.vue'
 import { updateCustomTagContent } from '@/services/customTags'
+import { Property } from '@/types/Editor'
+import BaseSpinner from '../spinner/BaseSpinner.vue'
+import { t } from '@/services/i18n'
 
 const emit = defineEmits(['update:modelValue'])
 
@@ -78,51 +88,47 @@ const props = withDefaults(
     }
 )
 
-const loading = ref(false)
+// Data
+const isMounted = ref<boolean>(false)
+const generatingPages = ref<boolean>(false)
 const pages = ref<Page[]>([])
-const pageGap = 24
 const renderedPageIndexes = ref<number[]>([])
-const pagePxHeight = computed(
+const pagePxHeight = computed<number>(
     () => (props.pageFormat[1] / 0.2645833333333) * props.zoom
 )
+const pagePxWidth = computed<number>(
+    () => (props.pageFormat[0] / 0.2645833333333) * props.zoom
+)
+const findAndReplaModalVisible = ref<boolean>(false)
 
-const selectedCustomElement = ref<HTMLElement>()
-
-const handleGeneratePages = () => {
-    loading.value = true
+//Actions
+const handleGeneratePages = async (): Promise<void> => {
+    if (generatingPages.value) return
+    generatingPages.value = true
     try {
-        pages.value = props.modelValue.map((c, idx) => ({
-            uuid: Math.random().toString(36).slice(-5),
-            contentIdx: idx,
-        }))
+        handleGeneratePagesFromModelValue()
     } finally {
-        loading.value = false
+        generatingPages.value = false
     }
 }
 
-const pageStyle = (index: number, allowOverflow: boolean) => {
+const handleGeneratePagesFromModelValue = () => {
+    pages.value = props.modelValue.map((c, idx) => ({
+        uuid: Math.random().toString(36).slice(-5),
+        contentIdx: idx,
+        content: c,
+    }))
+}
+
+const pageStyle = () => {
     const style: CSSProperties = {
-        width: `${props.pageFormat[0]}mm`,
-        transform: `scale(${props.zoom})`,
+        height: `${pagePxHeight.value}px`,
+        width: `${pagePxWidth.value}px`,
         padding: props.pageMargins,
-        minHeight: 'unset',
-        height: 'unset',
+        overflow: 'hidden',
     }
 
-    if (allowOverflow) {
-        style.minHeight = `${props.pageFormat[1]}mm`
-    } else {
-        style.height = `${props.pageFormat[1]}mm`
-    }
     return style
-}
-
-const getItemStyle = () => {
-    return {
-        marginBottom: `${pageGap}px`,
-        display: 'flex',
-        justifyContent: 'center',
-    }
 }
 
 const handleScrollUpdate = (
@@ -139,11 +145,11 @@ const handleScrollUpdate = (
 }
 
 const handleUpdateFindEndReplace = (updatedContent: string[]) => {
-    loading.value = true
+    generatingPages.value = true
     try {
         handleEmitUpdateModelValue(updatedContent)
     } finally {
-        loading.value = false
+        generatingPages.value = false
     }
 }
 
@@ -157,40 +163,70 @@ const handleInput = (event: Event, contentIdx: number) => {
     }
 }
 
-// const updateAllCustomTags = (tagsId: string, newValue: string) => {
-//     const updated = updateCustomTagsContent(props.modelValue, tagsId, newValue)
-//     handleEmitUpdateModelValue(updated)
-// }
-
 //Handle Emits
 const handleEmitUpdateModelValue = (updatedContent: string[]) => {
     emit('update:modelValue', updatedContent)
 }
 
-onMounted(async () => {
-    handleGeneratePages()
-
-    nextTick(() => {
-        selectedCustomElement.value = document.querySelector(
-            '.custom-tag'
-        ) as HTMLElement
-
-        const newModelValue = updateCustomTagContent({
-            modelValue: props.modelValue,
-            customTag: selectedCustomElement.value,
-            newValue: 'ROSSI',
-            replaceAllSiblings: true,
-            transformIntoPlainText: true,
-        })
-        handleEmitUpdateModelValue(newModelValue)
+const handleUpdateCustomTagContent = ({
+    customTag,
+    newValue,
+    properties = undefined,
+    transformIntoPlainText = false,
+    replaceAllSiblings = false,
+}: {
+    customTag: HTMLElement
+    newValue: string
+    properties?: Property[]
+    transformIntoPlainText?: boolean
+    replaceAllSiblings?: boolean
+}) => {
+    const newModelValue = updateCustomTagContent({
+        modelValue: props.modelValue,
+        customTag: customTag,
+        newValue: newValue,
+        properties: properties,
+        replaceAllSiblings: replaceAllSiblings,
+        transformIntoPlainText: transformIntoPlainText,
     })
+    handleEmitUpdateModelValue(newModelValue)
+}
+
+onMounted(async () => {
+    try {
+        isMounted.value = false
+        handleGeneratePages()
+    } finally {
+        isMounted.value = true
+    }
+
+    // await nextTick(() => {
+    //     const selectedCustomElement = document.querySelector(
+    //         '.custom-tag'
+    //     ) as HTMLElement
+
+    //     const newModelValue = updateCustomTagContent({
+    //         modelValue: props.modelValue,
+    //         customTag: selectedCustomElement,
+    //         newValue: 'ROSSI',
+    //         replaceAllSiblings: true,
+    //         transformIntoPlainText: false,
+    //     })
+    //     handleEmitUpdateModelValue(newModelValue)
+    // })
 })
 
 watch(
     () => props.modelValue,
-    () => {
-        handleGeneratePages()
+    async () => {
+        if (isMounted.value) {
+            handleGeneratePages()
+        }
     },
     { immediate: true, deep: true }
 )
+
+defineExpose({
+    handleUpdateCustomTagContent,
+})
 </script>

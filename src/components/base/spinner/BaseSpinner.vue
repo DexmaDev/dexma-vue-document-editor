@@ -10,10 +10,10 @@
 </template>
 
 <script setup lang="ts">
-import { t } from '@/services/i18n'
+import { t } from '@/services/i18n';
 import BaseIcon from '../icon/BaseIcon.vue'
-import BaseText from '../text/BaseText.vue'
 import { computed } from 'vue'
+import BaseText from '../text/BaseText.vue';
 
 const props = withDefaults(
     defineProps<{
